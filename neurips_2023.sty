@@ -272,8 +272,7 @@
     \@bottomtitlebar
     \if@submission
       \begin{tabular}[t]{c}\bf\rule{\z@}{24\p@}
-        Aarush Sheth, Jonah Weinbaum, Kevin Zvonarek
-         \\
+        Aarush Sheth , Jonah Weinbaum, Kevin Zvonarek \\
       \end{tabular}%
     \else
       \def\And{%
@@ -327,7 +326,9 @@
       (NeurIPS \@neuripsyear).%, \@neuripslocation.%
     }
   \else
+    \newcommand{\@noticestring}{%
     
+    }
 
     % hide the acknowledgements
     \NewEnviron{hide}{}
