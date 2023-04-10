@@ -85,7 +85,9 @@ The stock market is a complex system, with a multitude of factors influencing th
 
 Firstly, grasping the relationships between stocks and the overall market structure can aid investors in making more informed decisions regarding their investments. Additionally, network analysis may offer new tools for market analysts to monitor the stock market and identify trends or potential risks.
 
-To tackle this question, we will build upon a previous study that constructed a network for the US stock market based on the correlation of different stock returns (citation). In this study, the authors employed community detection techniques to the constructed correlation network and discovered that the resulting communities were consistent with market sectors classified using the Standard Industrial Classification  code. They also utilized network analysis and visualization software to generate visualizations of the return correlations among various public stocks, which offered an intuitive way to examine the overall correlation structure of different public stocks and identify key market segments.
+To tackle this question, we primarily build upon a previous study that constructed a network for the US stock market based on the correlation of different stock returns [1]. In this study, the authors employed community detection techniques, including degree centrality, betweenness centrality, and closeness centrality to analyze the constructed correlation network and discovered that the resulting communities were consistent with market sectors classified using the Standard Industrial Classification  code. They also utilized network analysis and visualization software to generate visualizations of the return correlations among various public stocks, which offered an intuitive way to examine the overall correlation structure of different public stocks and identify key market segments.
+
+Past research on network analysis for stock markets has explored multiple measures to construct edges between nodes in stock market networks, including zero-lag correlation, detrended covariance, and time-lag correlations of price changes[2].  Studies have covered both emerging and mature markets, with authors asserting that understanding topological properties can help identify correlation patterns among stocks, thus offering guidance for risk management. Common topological properties of interest include degree distribution, clustering, and component structure. One notable study examined the spread of poor stock performance due to the credit crisis[3]. The study was based on a minimal spanning tree of stock networks for stocks in S\&P 500 and NASDAQ-100 indices. The author concluded that losses in US stock markets followed a cascade or epidemic model along the correlations built upon historical stock prices.
 
 While this prior work provided valuable insights into the network structure of the stock market, there remains much to expand on this approach. In our research, we  concentrate on the lead-lag effect, which refers to the phenomenon where the returns of one stock lead or lag the returns of another stock. By analyzing the lead-lag effect within the stock market network, we aim to offer insights into the dynamics of stock market behavior and potentially inform investment strategies.
 
@@ -107,8 +109,14 @@ In conclusion, our research aims to determine whether network analysis of the st
 
 \section*{References}
 
+[1]: Sun, Tian, Yang :Network Analysis of the Stock Market
 
+[2]: A. Namaki, A.H. Shirazi, R. Raei, and G.R. Jafari. Network analysis of a financial market based on genuine correlation and threshold method. Physica A: Statistical
+Mechanics and its Applications, 2011
 
+[3]: R. D. Smith. The Spread of the Credit Crisis: View
+from a Stock Correlation Network. Journal of Korean
+Physical Society, 54:2460, June 2009.
 \medskip
 
 
