@@ -1,0 +1,70 @@
+% SIAM Article Template
+\documentclass[onefignum,onetabnum]{siamart171218}
+
+% Information that is shared between the article and the supplement
+% (title and author information, macros, packages, etc.) goes into
+% ex_shared.tex. If there is no supplement, this file can be included
+% directly.
+
+\input{ex_shared}
+
+% Optional PDF information
+\ifpdf
+\hypersetup{
+  pdftitle={Networks ??},
+  pdfauthor={Kevin Zvonarek,Jonah Weinbaum, and Aarush Sheth}
+}
+\fi
+
+% The next statement enables references to information in the
+% supplement. See the xr-hyperref package for details.
+
+%% Use \myexternaldocument on Overleaf
+\myexternaldocument{ex_supplement}
+
+
+\begin{document}
+
+\maketitle
+
+% REQUIRED
+\begin{abstract}
+  Needed ??
+\end{abstract}
+
+
+
+
+\section{Introduction}
+
+The stock market is a complex system, with a multitude of factors influencing the performance of individual stocks and the market as a whole. One method for comprehending and potentially predicting stock market behavior is through network analysis, which can offer insights into the relationships between stocks and the overall market structure. In this paper, we seek to address the question: Can network analysis of the stock market, specifically examining the lead-lag effect, provide valuable insights for investors and market analysts? This inquiry is both interesting and pertinent for several reasons.
+
+Firstly, grasping the relationships between stocks and the overall market structure can aid investors in making more informed decisions regarding their investments. Additionally, network analysis may offer new tools for market analysts to monitor the stock market and identify trends or potential risks.
+
+To tackle this question, we will build upon a previous study that constructed a network for the US stock market based on the correlation of different stock returns (citation). In this study, the authors employed community detection techniques to the constructed correlation network and discovered that the resulting communities were consistent with market sectors classified using the Standard Industrial Classification  code. They also utilized network analysis and visualization software to generate visualizations of the return correlations among various public stocks, which offered an intuitive way to examine the overall correlation structure of different public stocks and identify key market segments.
+
+While this prior work provided valuable insights into the network structure of the stock market, there remains much to expand on this approach. In our research, we  concentrate on the lead-lag effect, which refers to the phenomenon where the returns of one stock lead or lag the returns of another stock. By analyzing the lead-lag effect within the stock market network, we aim to offer insights into the dynamics of stock market behavior and potentially inform investment strategies.
+
+To accomplish this objective, we will first construct a network of the stock market using stock return data.  We will then apply network analysis techniques, such as community detection and centrality measures, to identify the lead-lag relationships between stocks. Specifically, we will employ degree centrality, eigenvector centrality, and hubs and authorities to examine the influence and importance of individual stocks within the network. Additionally, we will evaluate the modularity of the network to determine the strength of the community structure.
+
+Degree centrality measures the number of connections a node has within the network, which can help identify stocks that are highly connected to others and may have a stronger influence on the market. In the context of the lead-lag effect, stocks with high degree centrality may be more likely to lead or lag the returns of other stocks in the network, making them important targets for further analysis and potential investment strategies.
+
+Eigenvector centrality considers not only the number of connections a node has but also the importance of the nodes it is connected to, providing a more nuanced understanding of a stock's influence within the network. Stocks with high eigenvector centrality may be connected to other influential stocks, suggesting that they could play a pivotal role in the lead-lag dynamics of the market.
+
+Hubs and authorities analysis can help identify stocks that are either highly connected to influential stocks (hubs) or are themselves influential within the network (authorities). In terms of the lead-lag effect, hubs may be important sources of information for predicting the returns of other stocks, while authorities may be stocks whose returns are particularly influential in driving the market.
+
+Modularity measures the strength of the community structure within the network, which can provide insights into the relationships between different market sectors. A high modularity indicates that stocks within the same sector are more likely to have similar lead-lag relationships, suggesting that sector-specific investment strategies may be more effective.
+
+There is evidence to suggest that this method of analysis will be successful in providing insights into the stock market's network structure and lead-lag relationships. Previous work in network analysis of the stock market has demonstrated that stocks within the same sector tend to exhibit similar patterns of correlations, suggesting that the network structure is a meaningful representation of the stock market (citation)., other studies have found that network analysis can be useful in identifying the spread of market crises and informing portfolio management strategies (citation).
+
+In conclusion, our research aims to determine whether network analysis of the stock market, particularly analyzing the lead-lag effect, can provide valuable insights for investors and market analysts. By building on previous work and applying network analysis techniques such as degree centrality, eigenvector centrality, hubs and authorities, and modularity to the stock market network, we hope to contribute to the understanding of the stock market's complex dynamics and potentially inform investment strategies and market monitoring efforts.
+
+\section{Main results}
+\label{sec:main}
+
+\bibliographystyle{siamplain}
+\bibliography{references}
+
+http://snap.stanford.edu/class/cs224w-2015/projects_2015/Network_Analysis_of_the_Stock_Market.pdf
+
+\end{document}
