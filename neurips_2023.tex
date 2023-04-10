@@ -1,36 +1,82 @@
-% SIAM Article Template
-\documentclass[onefignum,onetabnum]{siamart171218}
+\documentclass{article}
 
-% Information that is shared between the article and the supplement
-% (title and author information, macros, packages, etc.) goes into
-% ex_shared.tex. If there is no supplement, this file can be included
-% directly.
 
-\input{ex_shared}
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2023
 
-% Optional PDF information
-\ifpdf
-\hypersetup{
-  pdftitle={Networks ??},
-  pdfauthor={Kevin Zvonarek,Jonah Weinbaum, and Aarush Sheth}
+
+% ready for submission
+\usepackage{neurips_2023}
+
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2023}
+
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+%     \usepackage[final]{neurips_2023}
+
+
+% to avoid loading the natbib package, add option nonatbib:
+%    \usepackage[nonatbib]{neurips_2023}
+
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+
+
+\title{A Decadal Analysis of the Lead Lag Effect in the NYSE}
+
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+
+\author{%
+  Aarush Sheth, Jonah Weinbaum, Kevin Zvonarek} \\
+  % examples of more authors
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \AND
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
 }
-\fi
-
-% The next statement enables references to information in the
-% supplement. See the xr-hyperref package for details.
-
-%% Use \myexternaldocument on Overleaf
-\myexternaldocument{ex_supplement}
 
 
 \begin{document}
 
+
 \maketitle
 
-% REQUIRED
-\begin{abstract}
-  Needed ??
-\end{abstract}
 
 
 
@@ -59,12 +105,24 @@ There is evidence to suggest that this method of analysis will be successful in 
 
 In conclusion, our research aims to determine whether network analysis of the stock market, particularly analyzing the lead-lag effect, can provide valuable insights for investors and market analysts. By building on previous work and applying network analysis techniques such as degree centrality, eigenvector centrality, hubs and authorities, and modularity to the stock market network, we hope to contribute to the understanding of the stock market's complex dynamics and potentially inform investment strategies and market monitoring efforts.
 
-\section{Main results}
-\label{sec:main}
 
-\bibliographystyle{siamplain}
-\bibliography{references}
+\section*{References}
 
-http://snap.stanford.edu/class/cs224w-2015/projects_2015/Network_Analysis_of_the_Stock_Market.pdf
+
+References follow the acknowledgments in the camera-ready paper. Use unnumbered first-level heading for
+the references. Any choice of citation style is acceptable as long as you are
+consistent. It is permissible to reduce the font size to \verb+small+ (9 point)
+when listing the references.
+Note that the Reference section does not count towards the page limit.
+\medskip
+
+
+{
+\small
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \end{document}
