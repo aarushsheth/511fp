@@ -5,7 +5,7 @@ import numba
 from numba import njit
 from numba.typed import Dict
 from numba.typed import List
-
+import networkx as nx
 
 @njit
 def process_pair(fuck8, n, x, total_pairs):
@@ -78,3 +78,25 @@ typed_x = List(x)
 start_date = '2023-03-01'
 end_date = '2023-03-02'
 month_data = process_month(start_date, end_date)
+
+def build_graph(adj_matrix, stock_symbols):
+    G = nx.DiGraph()
+    
+    for i, stock_i in enumerate(stock_symbols):
+        for j, stock_j in enumerate(stock_symbols):
+            weight = adj_matrix[i][j]
+            if weight > 0:
+                G.add_edge(stock_i, stock_j, weight=weight)
+                
+    return G
+
+def visualize_graph(G):
+    pos = nx.spring_layout(G)
+    nx.draw(G, pos, with_labels=True, node_size=500, font_size=8, font_weight='bold', node_color='orange', alpha=0.8, arrowsize=12)
+    plt.show()
+
+# Build and visualize the graph for each adjacency matrix in month_data
+# Uncomment to run the plots
+# for adj_matrix in month_data:
+#     G = build_graph(adj_matrix, x)
+#     visualize_graph(G)
