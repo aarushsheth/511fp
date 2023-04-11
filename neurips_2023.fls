@@ -628,6 +628,8 @@ INPUT /usr/local/texlive/2022/texmf-dist/fonts/vf/adobe/helvetic/phvr8t.vf
 INPUT /usr/local/texlive/2022/texmf-dist/fonts/tfm/adobe/helvetic/phvr8r.tfm
 INPUT /usr/local/texlive/2022/texmf-dist/fonts/vf/adobe/times/ptmr8t.vf
 INPUT /usr/local/texlive/2022/texmf-dist/fonts/tfm/adobe/times/ptmr8r.tfm
+INPUT /usr/local/texlive/2022/texmf-dist/fonts/vf/adobe/times/ptmr8t.vf
+INPUT /usr/local/texlive/2022/texmf-dist/fonts/tfm/adobe/times/ptmr8r.tfm
 INPUT neurips_2023.aux
 INPUT ./neurips_2023.out
 INPUT ./neurips_2023.out
