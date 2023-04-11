@@ -10,7 +10,6 @@ import networkx as nx
 @njit
 def process_pair(pairValues, n, x, total_pairs):
     m = np.zeros((498, 498))
-    
     for index in range(total_pairs):
         i = x[index // n]
         j = x[index % n]
@@ -25,6 +24,7 @@ def process_pair(pairValues, n, x, total_pairs):
         if (pairValuesArray[0] >= 0):
             if pairValuesArray[0] <= pairValuesArray[1] and pairValuesArray[0] <= pairValuesArray[2]:
                 m[x1][y1] = 1
+
         if (pairValuesArray[0] < 0):
             if pairValuesArray[0] <= pairValuesArray[2] and pairValuesArray[0] <= pairValuesArray[1]:
                 m[x1][y1] = 1
@@ -38,6 +38,7 @@ def process_month(start_date, end_date):
         date_str = date.strftime("%Y-%m-%d")
         filtered_data = stockData[stockData["datadate"] == datetime.strptime(
             date_str, "%Y-%m-%d")]
+
         if not filtered_data.empty:
             filtered_data = filtered_data.drop("datadate", axis=1)
             filtered_data = filtered_data.drop("Unnamed: 0", axis=1)
@@ -45,6 +46,7 @@ def process_month(start_date, end_date):
             typed_dict = Dict.empty(
                 key_type=numba.types.unicode_type,
                 value_type=numba.types.float64)
+
             for key, value in data_dict.items():
                 typed_dict[key] = value[next(iter(value))]
 
@@ -69,6 +71,33 @@ def visualize_graph(G):
     nx.draw(G, pos, with_labels=True, node_size=500, font_size=8, font_weight='bold', node_color='orange', alpha=0.8, arrowsize=12)
     plt.show()
 
+def modularity(G):
+    communities = nx.algorithms.community.greedy_modularity_communities(G.to_undirected())
+    modularity = nx.algorithms.community.modularity(G.to_undirected(), communities)
+    return modularity
+
+def eigenvector_centrality(G):
+    eigenvector_centralities = nx.eigenvector_centrality(G)
+    return eigenvector_centralities
+
+def diameter(G):
+    if nx.is_connected(G.to_undirected()):
+        return nx.diameter(G.to_undirected())
+    else:
+        return float('inf')
+
+def average_path_length(G):
+    if nx.is_connected(G.to_undirected()):
+        return nx.average_shortest_path_length(G.to_undirected())
+    else:
+        return float('inf')
+
+def average_node_degree(G):
+    return 2 * G.number_of_edges() / G.number_of_nodes()
+
+def clustering_coefficients(G):
+    return nx.clustering(G.to_undirected())
+
 
 stockData = pd.read_csv("finally.csv")
 stockData['datadate'] = pd.to_datetime(stockData['datadate'])
@@ -83,11 +112,17 @@ total_pairs = n * n
 typed_x = List(x)
 
 start_date = '2023-03-01'
-end_date = '2023-03-02'
+end_date = '2023-03-01'
 month_data = process_month(start_date, end_date)
 
-# Build and visualize the graph for each adjacency matrix in month_data
-# Uncomment to run the plots
-# for adj_matrix in month_data:
-#     G = build_graph(adj_matrix, x)
-#     visualize_graph(G)
+for adj_matrix in month_data:
+    G = build_graph(adj_matrix, x)
+    # Uncomment to run the plots and perform calcs
+    # visualize_graph(G) 
+    # print("Modularity:", modularity(G))
+    # print("Eigenvector Centralities:", eigenvector_centrality(G))
+    # print("Diameter:", diameter(G))
+    # print("Average Path Length:", average_path_length(G))
+    # print("Average Node Degree:", average_node_degree(G))
+    # print("Clustering Coefficients:", clustering_coefficients(G))
+    # print("\n")
