@@ -125,10 +125,12 @@ def clustering_coefficients(G):
 # end_time = datetime.now()
 # print('Computations completed, duration: {}'.format(end_time - start_time))
 
-with open('month_data.pkl', 'rb') as f:
-    loaded_month_data = pickle.load(f)
 with open('day_data.pkl', 'rb') as f:
-    loaded_day_data = pickle.load(f)
+    loaded_daily_data = pickle.load(f)
+with open('weekly_data.pkl', 'rb') as f:
+    loaded_weekly_data = pickle.load(f)
+with open('monthly_data.pkl', 'rb') as f:
+    loaded_monthly_data = pickle.load(f)
     
 # for adj_matrix in month_data:
     # G = build_graph(adj_matrix, x)
