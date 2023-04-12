@@ -8,6 +8,7 @@ from numba.typed import List
 import networkx as nx
 import pickle
 import matplotlib.pyplot as plt
+import yfinance as yf
 
 @njit
 def process_pair(pairValues, n, x, total_pairs):
@@ -32,16 +33,13 @@ def process_pair(pairValues, n, x, total_pairs):
                 m[x1][y1] = 1
     return m
 
-#slice it monthly, add pickle code
 def process_month(start_date, end_date):
     date_range = pd.date_range(start=start_date, end=end_date, freq='D')
     results = []
-
     for date in date_range:
         date_str = date.strftime("%Y-%m-%d")
         filtered_data = stockData[stockData["datadate"] == datetime.strptime(
             date_str, "%Y-%m-%d")]
-
         if not filtered_data.empty:
             print(f"Non-empty data found for {date_str}")
             filtered_data = filtered_data.drop("datadate", axis=1)
@@ -50,24 +48,19 @@ def process_month(start_date, end_date):
             typed_dict = Dict.empty(
                 key_type=numba.types.unicode_type,
                 value_type=numba.types.float64)
-
             for key, value in data_dict.items():
                 typed_dict[key] = value[next(iter(value))]
-
             result = process_pair(typed_dict, n, typed_x, total_pairs)
             results.append(result)
-
     return np.array(results)
 
 def build_graph(adj_matrix, stock_symbols):
     G = nx.DiGraph()
-    
     for i, stock_i in enumerate(stock_symbols):
         for j, stock_j in enumerate(stock_symbols):
             weight = adj_matrix[i][j]
             if weight > 0:
-                G.add_edge(stock_i, stock_j, weight=weight)
-                
+                G.add_edge(stock_i, stock_j, weight=weight)     
     return G
 
 def visualize_graph(G):
@@ -102,23 +95,42 @@ def average_node_degree(G):
 def clustering_coefficients(G):
     return nx.clustering(G.to_undirected())
 
+def get_stock_prices(stock_names, selected_stocks):
+    stock_prices = stockData[['datadate'] + selected_stocks].copy()
+    stock_prices.set_index('datadate', inplace=True)
+    return stock_prices
+
+def construct_portfolio_and_plot(stock_names, loaded_daily_data):
+    selected_stocks = stock_names[:5] 
+    stock_prices_selected = get_stock_prices(stock_names, selected_stocks)
+    daily_returns = stock_prices_selected.pct_change().dropna()
+    weights = np.array([0.2, 0.2, 0.2, 0.2, 0.2])
+    portfolio_returns = daily_returns.dot(weights)
+    cumulative_portfolio_returns = (1 + portfolio_returns).cumprod()
+    aapl_prices = stockData[['datadate', 'AAPL']].copy()
+    aapl_prices.set_index('datadate', inplace=True)
+    aapl_returns = aapl_prices.pct_change().dropna()
+    cumulative_aapl_returns = (1 + aapl_returns).cumprod()
+    plt.plot(cumulative_portfolio_returns, label="Portfolio Returns")
+    plt.plot(cumulative_aapl_returns, label="AAPL Returns")
+    plt.legend()
+    plt.show()
+   
 # start_time = datetime.now()
-# stockData = pd.read_csv("finally.csv")
-# stockData['datadate'] = pd.to_datetime(stockData['datadate'])
-# stockData = stockData.sort_values(by='datadate')
+stockData = pd.read_csv("finally.csv")
+stockData['datadate'] = pd.to_datetime(stockData['datadate'])
+stockData = stockData.sort_values(by='datadate')
 
-# with open("newstocks.txt", "r") as f:
-#     x = f.read().splitlines()
-# x[0] = "A"
+with open("newstocks.txt", "r") as f:
+    x = f.read().splitlines()
+x[0] = "A"
+n = len(x)
+total_pairs = n * n
+typed_x = List(x)
+start_date = '2013-03-15'
+end_date = '2023-03-15'
 
-# n = len(x)
-# total_pairs = n * n
-# typed_x = List(x)
-
-# start_date = '2013-03-15'
-# end_date = '2023-03-15'
 # month = process_month(start_date, end_date)
-
 # with open('month_data.pkl', 'wb') as f:
 #     pickle.dump(month_data, f)
 
@@ -131,6 +143,15 @@ with open('weekly_data.pkl', 'rb') as f:
     loaded_weekly_data = pickle.load(f)
 with open('monthly_data.pkl', 'rb') as f:
     loaded_monthly_data = pickle.load(f)
+
+construct_portfolio_and_plot(stock_names=x, loaded_daily_data=loaded_daily_data)
+
+# Read stock names from newstocks.txt
+with open("newstocks.txt", "r") as f:
+    stock_names = f.read().splitlines()
+
+# Use daily lead-lag data to construct the portfolio
+construct_portfolio_and_plot(stock_names, loaded_daily_data)
     
 # for adj_matrix in month_data:
     # G = build_graph(adj_matrix, x)
