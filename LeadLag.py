@@ -34,7 +34,7 @@ def process_pair(pairValues, n, x, total_pairs):
 
 #slice it monthly, add pickle code
 def process_month(start_date, end_date):
-    date_range = pd.date_range(start=start_date, end=end_date, freq='MS')
+    date_range = pd.date_range(start=start_date, end=end_date, freq='D')
     results = []
 
     for date in date_range:
@@ -43,6 +43,7 @@ def process_month(start_date, end_date):
             date_str, "%Y-%m-%d")]
 
         if not filtered_data.empty:
+            print(f"Non-empty data found for {date_str}")
             filtered_data = filtered_data.drop("datadate", axis=1)
             filtered_data = filtered_data.drop("Unnamed: 0", axis=1)
             data_dict = filtered_data.to_dict()
@@ -101,32 +102,34 @@ def average_node_degree(G):
 def clustering_coefficients(G):
     return nx.clustering(G.to_undirected())
 
-start_time = datetime.now()
-stockData = pd.read_csv("finally.csv")
-stockData['datadate'] = pd.to_datetime(stockData['datadate'])
-stockData = stockData.sort_values(by='datadate')
+# start_time = datetime.now()
+# stockData = pd.read_csv("finally.csv")
+# stockData['datadate'] = pd.to_datetime(stockData['datadate'])
+# stockData = stockData.sort_values(by='datadate')
 
-with open("newstocks.txt", "r") as f:
-    x = f.read().splitlines()
-x[0] = "A"
+# with open("newstocks.txt", "r") as f:
+#     x = f.read().splitlines()
+# x[0] = "A"
 
-n = len(x)
-total_pairs = n * n
-typed_x = List(x)
+# n = len(x)
+# total_pairs = n * n
+# typed_x = List(x)
 
-start_date = '2013-03-15'
-end_date = '2023-03-15'
-month_data = process_month(start_date, end_date)
+# start_date = '2013-03-15'
+# end_date = '2023-03-15'
+# month = process_month(start_date, end_date)
 
-with open('month_data.pkl', 'wb') as f:
-    pickle.dump(month_data, f)
+# with open('month_data.pkl', 'wb') as f:
+#     pickle.dump(month_data, f)
 
-end_time = datetime.now()
-print('Computations completed, duration: {}'.format(end_time - start_time))
+# end_time = datetime.now()
+# print('Computations completed, duration: {}'.format(end_time - start_time))
 
-#with open('month_data.pkl', 'rb') as f:
-#    loaded_month_data = pickle.load(f)
-
+with open('month_data.pkl', 'rb') as f:
+    loaded_month_data = pickle.load(f)
+with open('day_data.pkl', 'rb') as f:
+    loaded_day_data = pickle.load(f)
+    
 # for adj_matrix in month_data:
     # G = build_graph(adj_matrix, x)
     # visualize_graph(G) 
