@@ -8,7 +8,6 @@ from numba.typed import List
 import networkx as nx
 import pickle
 import matplotlib.pyplot as plt
-import yfinance as yf
 
 @njit
 def process_pair(pairValues, n, x, total_pairs):
@@ -27,7 +26,6 @@ def process_pair(pairValues, n, x, total_pairs):
         if (pairValuesArray[0] >= 0):
             if pairValuesArray[0] <= pairValuesArray[1] and pairValuesArray[0] <= pairValuesArray[2]:
                 m[x1][y1] = 1
-
         if (pairValuesArray[0] < 0):
             if pairValuesArray[0] <= pairValuesArray[2] and pairValuesArray[0] <= pairValuesArray[1]:
                 m[x1][y1] = 1
@@ -95,64 +93,101 @@ def average_node_degree(G):
 def clustering_coefficients(G):
     return nx.clustering(G.to_undirected())
 
-def get_stock_prices(stock_names, selected_stocks):
-    stock_prices = stockData[['datadate'] + selected_stocks].copy()
-    stock_prices.set_index('datadate', inplace=True)
-    return stock_prices
+def portfolio_value(portfolio, stock_prices):
+    return sum(shares * stock_prices[stock] for stock, shares in portfolio.items())
 
-def construct_portfolio_and_plot(stock_names, loaded_daily_data):
-    selected_stocks = stock_names[:5] 
-    stock_prices_selected = get_stock_prices(stock_names, selected_stocks)
-    daily_returns = stock_prices_selected.pct_change().dropna()
-    weights = np.array([0.2, 0.2, 0.2, 0.2, 0.2])
-    portfolio_returns = daily_returns.dot(weights)
-    cumulative_portfolio_returns = (1 + portfolio_returns).cumprod()
-    aapl_prices = stockData[['datadate', 'AAPL']].copy()
-    aapl_prices.set_index('datadate', inplace=True)
-    aapl_returns = aapl_prices.pct_change().dropna()
-    cumulative_aapl_returns = (1 + aapl_returns).cumprod()
-    plt.plot(cumulative_portfolio_returns, label="Portfolio Returns")
-    plt.plot(cumulative_aapl_returns, label="AAPL Returns")
-    plt.legend()
-    plt.show()
-   
+def buy_stock(portfolio, stock, amount, price):
+    portfolio[stock] += amount / price
+
+def sell_stock(portfolio, stock, amount, price):
+    portfolio[stock] -= amount / price
+
 # start_time = datetime.now()
 stockData = pd.read_csv("finally.csv")
 stockData['datadate'] = pd.to_datetime(stockData['datadate'])
 stockData = stockData.sort_values(by='datadate')
-
-with open("newstocks.txt", "r") as f:
-    x = f.read().splitlines()
+with open("newstocks.txt", "r") as f: x = f.read().splitlines()
 x[0] = "A"
 n = len(x)
 total_pairs = n * n
 typed_x = List(x)
 start_date = '2013-03-15'
 end_date = '2023-03-15'
-
 # month = process_month(start_date, end_date)
 # with open('month_data.pkl', 'wb') as f:
 #     pickle.dump(month_data, f)
-
 # end_time = datetime.now()
 # print('Computations completed, duration: {}'.format(end_time - start_time))
+with open('day_data.pkl', 'rb') as f: loaded_daily_data = pickle.load(f)
+with open('weekly_data.pkl', 'rb') as f: loaded_weekly_data = pickle.load(f)
+with open('monthly_data.pkl', 'rb') as f: loaded_monthly_data = pickle.load(f)
+summed_data = np.sum(loaded_daily_data[:2018, :, :], axis=0)
+masked_array = np.ma.masked_array(summed_data, mask=np.eye(498, dtype=bool))
+indices_flattened = np.argpartition(masked_array.ravel(), -10)[-10:]
+row_indices, col_indices = np.unravel_index(indices_flattened, masked_array.shape)
+with open("newstocks.txt", "r") as f: stock_names = f.read().splitlines()
+# for row, col in zip(row_indices, col_indices):
+#     print(f"Row: {row} ({stock_names[row]}), Col: {col} ({stock_names[col]}). Sum value: {summed_data[row, col]}")
+leader_lagger_dict = {stock_names[row]: stock_names[col] for row, col in zip(row_indices, col_indices)}
+# for leader, lagger in leader_lagger_dict.items():
+#     print(f"Leader: {leader}, Lagger: {lagger}")
+twoyears_daily_data = loaded_daily_data[-500:, :, :]
+stocks_to_include = set(leader_lagger_dict.keys()).union(set(leader_lagger_dict.values()))
+filtered_stock_data = stockData.loc[:, stocks_to_include].tail(500)
+initial_investment = 500000
+n_laggers = len(leader_lagger_dict.values())
+investment_per_stock = initial_investment / n_laggers
+portfolio = {stock: 0 for stock in leader_lagger_dict.values()}
 
-with open('day_data.pkl', 'rb') as f:
-    loaded_daily_data = pickle.load(f)
-with open('weekly_data.pkl', 'rb') as f:
-    loaded_weekly_data = pickle.load(f)
-with open('monthly_data.pkl', 'rb') as f:
-    loaded_monthly_data = pickle.load(f)
+for stock in portfolio:
+    price = filtered_stock_data[stock].iloc[0]
+    buy_stock(portfolio, stock, investment_per_stock, price)
+days_in_quarter = 90
+n_days = filtered_stock_data.shape[0]
+trailing_stop_percentage = 0.02
 
-construct_portfolio_and_plot(stock_names=x, loaded_daily_data=loaded_daily_data)
+for day in range(0, n_days, days_in_quarter):
+    highest_leader_prices = {leader: 0 for leader in leader_lagger_dict.keys()}
+    for leader, lagger in leader_lagger_dict.items():
+        for i in range(day, min(day + days_in_quarter, n_days)):
+            current_leader_price = filtered_stock_data[leader].iloc[i]
+            highest_leader_prices[leader] = max(highest_leader_prices[leader], current_leader_price)
+            if current_leader_price >= 1.02 * filtered_stock_data[leader].iloc[i - 1]:
+                price = filtered_stock_data[lagger].iloc[i]
+                buy_stock(portfolio, lagger, investment_per_stock, price)
+                for j in range(i, min(day + days_in_quarter, n_days)):
+                    current_leader_price = filtered_stock_data[leader].iloc[j]
+                    highest_leader_prices[leader] = max(highest_leader_prices[leader], current_leader_price)
+                    if current_leader_price <= (1 - trailing_stop_percentage) * highest_leader_prices[leader]:
+                        price = filtered_stock_data[lagger].iloc[j]
+                        sell_stock(portfolio, lagger, investment_per_stock, price)
+                        break
+                break
 
-# Read stock names from newstocks.txt
-with open("newstocks.txt", "r") as f:
-    stock_names = f.read().splitlines()
+print(portfolio)
+portfolio_values = []
 
-# Use daily lead-lag data to construct the portfolio
-construct_portfolio_and_plot(stock_names, loaded_daily_data)
-    
+for day in range(0, n_days, days_in_quarter):
+    stock_prices = filtered_stock_data.iloc[day]
+    current_value = portfolio_value(portfolio, stock_prices)
+    portfolio_values.append(current_value)
+
+initial_value = initial_investment
+final_value = portfolio_value(portfolio, filtered_stock_data.iloc[-1])
+portfolio_return = (final_value - initial_value) / initial_value
+print(f"Portfolio return over the period: {portfolio_return * 100:.2f}%")
+fig, ax1 = plt.subplots()
+ax1.plot(range(0, n_days, days_in_quarter), portfolio_values, color='blue')
+ax1.set_xlabel("Days")
+ax1.set_ylabel("Portfolio Value", color='blue')
+ax1.tick_params(axis='y', labelcolor='blue')
+ax2 = ax1.twinx()
+ax2.plot(range(0, n_days, days_in_quarter), [100 * (value - initial_value) / initial_value for value in portfolio_values], color='red')
+ax2.set_ylabel("Portfolio Return (%)", color='red')
+ax2.tick_params(axis='y', labelcolor='red')
+plt.title("Portfolio Value and Return Over Time")
+plt.show()
+
 # for adj_matrix in month_data:
     # G = build_graph(adj_matrix, x)
     # visualize_graph(G) 
