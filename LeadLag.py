@@ -61,9 +61,9 @@ def build_graph(adj_matrix, stock_symbols):
                 G.add_edge(stock_i, stock_j, weight=weight)     
     return G
 
-def visualize_graph(G):
+def visualize_graph(G, node_colors):
     pos = nx.spring_layout(G)
-    nx.draw(G, pos, with_labels=True, node_size=500, font_size=8, font_weight='bold', node_color='orange', alpha=0.8, arrowsize=12)
+    nx.draw(G, pos, with_labels=True, node_size=500, font_size=8, font_weight='bold', node_color=node_colors, alpha=0.8, arrowsize=12)
     plt.show()
 
 def modularity(G):
@@ -164,7 +164,8 @@ for day in range(0, n_days, days_in_quarter):
                         break
                 break
 
-print(portfolio)
+rounded_portfolio = {k: round(v, 2) for k, v in portfolio.items()}
+print(rounded_portfolio)
 portfolio_values = []
 
 for day in range(0, n_days, days_in_quarter):
@@ -187,14 +188,19 @@ ax2.set_ylabel("Portfolio Return (%)", color='red')
 ax2.tick_params(axis='y', labelcolor='red')
 plt.title("Portfolio Value and Return Over Time")
 plt.show()
-
-# for adj_matrix in month_data:
-    # G = build_graph(adj_matrix, x)
-    # visualize_graph(G) 
-    # print("Modularity:", modularity(G))
-    # print("Eigenvector Centralities:", eigenvector_centrality(G))
-    # print("Diameter:", diameter(G))
-    # print("Average Path Length:", average_path_length(G))
-    # print("Average Node Degree:", average_node_degree(G))
-    # print("Clustering Coefficients:", clustering_coefficients(G))
-    # print("\n")
+leader_stocks = list(leader_lagger_dict.keys())
+lagger_stocks = list(leader_lagger_dict.values())
+stock_colors = ['red' if stock in leader_stocks else 'blue' for stock in stocks_to_include]
+adj_matrix = np.random.rand(len(stocks_to_include), len(stocks_to_include))
+G = build_graph(adj_matrix, stocks_to_include)
+visualize_graph(G, stock_colors)
+print("Modularity:", round(modularity(G),2))
+eigenvector_centralities = eigenvector_centrality(G)
+rounded_eigenvector_centralities = {k: round(v, 2) for k, v in eigenvector_centralities.items()}
+print("Eigenvector Centralities:", rounded_eigenvector_centralities)
+print("Diameter:", round(diameter(G),2))
+print("Average Path Length:", round(average_path_length(G),2))
+print("Average Node Degree:", round(average_node_degree(G),2))
+clustering_coeffs = clustering_coefficients(G)
+rounded_clustering_coeffs = {k: round(v, 2) for k, v in clustering_coeffs.items()}
+print("Clustering Coefficients:", rounded_clustering_coeffs)
