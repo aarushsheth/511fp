@@ -142,65 +142,72 @@ portfolio = {stock: 0 for stock in leader_lagger_dict.values()}
 for stock in portfolio:
     price = filtered_stock_data[stock].iloc[0]
     buy_stock(portfolio, stock, investment_per_stock, price)
-days_in_quarter = 90
+
 n_days = filtered_stock_data.shape[0]
 trailing_stop_percentage = 0.02
 
-for day in range(0, n_days, days_in_quarter):
-    highest_leader_prices = {leader: 0 for leader in leader_lagger_dict.keys()}
-    for leader, lagger in leader_lagger_dict.items():
-        for i in range(day, min(day + days_in_quarter, n_days)):
-            current_leader_price = filtered_stock_data[leader].iloc[i]
-            highest_leader_prices[leader] = max(highest_leader_prices[leader], current_leader_price)
-            if current_leader_price >= 1.02 * filtered_stock_data[leader].iloc[i - 1]:
-                price = filtered_stock_data[lagger].iloc[i]
-                buy_stock(portfolio, lagger, investment_per_stock, price)
-                for j in range(i, min(day + days_in_quarter, n_days)):
-                    current_leader_price = filtered_stock_data[leader].iloc[j]
-                    highest_leader_prices[leader] = max(highest_leader_prices[leader], current_leader_price)
-                    if current_leader_price <= (1 - trailing_stop_percentage) * highest_leader_prices[leader]:
-                        price = filtered_stock_data[lagger].iloc[j]
-                        sell_stock(portfolio, lagger, investment_per_stock, price)
-                        break
-                break
+highest_leader_prices = {leader: 0 for leader in leader_lagger_dict.keys()}
+for leader, lagger in leader_lagger_dict.items():
+    for i in range(n_days):
+        current_leader_price = filtered_stock_data[leader].iloc[i]
+        highest_leader_prices[leader] = max(highest_leader_prices[leader], current_leader_price)
+        if current_leader_price >= 1.02 * filtered_stock_data[leader].iloc[i - 1]:
+            price = filtered_stock_data[lagger].iloc[i]
+            buy_stock(portfolio, lagger, investment_per_stock, price)
+            for j in range(i, n_days):
+                current_leader_price = filtered_stock_data[leader].iloc[j]
+                highest_leader_prices[leader] = max(highest_leader_prices[leader], current_leader_price)
+                if current_leader_price <= (1 - trailing_stop_percentage) * highest_leader_prices[leader]:
+                    price = filtered_stock_data[lagger].iloc[j]
+                    sell_stock(portfolio, lagger, investment_per_stock, price)
+                    break
+            break
 
 rounded_portfolio = {k: round(v, 2) for k, v in portfolio.items()}
 print(rounded_portfolio)
 portfolio_values = []
 
-for day in range(0, n_days, days_in_quarter):
+for day in range(n_days):
     stock_prices = filtered_stock_data.iloc[day]
     current_value = portfolio_value(portfolio, stock_prices)
     portfolio_values.append(current_value)
-
+    
 initial_value = initial_investment
 final_value = portfolio_value(portfolio, filtered_stock_data.iloc[-1])
 portfolio_return = (final_value - initial_value) / initial_value
 print(f"Portfolio return over the period: {portfolio_return * 100:.2f}%")
+
+daily_portfolio_values = []
+for day in range(n_days):
+    stock_prices = filtered_stock_data.iloc[day]
+    current_value = portfolio_value(portfolio, stock_prices)
+    daily_portfolio_values.append(current_value)
+
 fig, ax1 = plt.subplots()
-ax1.plot(range(0, n_days, days_in_quarter), portfolio_values, color='blue')
+ax1.plot(range(n_days), daily_portfolio_values, color='blue')
 ax1.set_xlabel("Days")
 ax1.set_ylabel("Portfolio Value", color='blue')
 ax1.tick_params(axis='y', labelcolor='blue')
 ax2 = ax1.twinx()
-ax2.plot(range(0, n_days, days_in_quarter), [100 * (value - initial_value) / initial_value for value in portfolio_values], color='red')
+ax2.plot(range(n_days), [100 * (value - initial_value) / initial_value for value in daily_portfolio_values], color='red')
 ax2.set_ylabel("Portfolio Return (%)", color='red')
 ax2.tick_params(axis='y', labelcolor='red')
 plt.title("Portfolio Value and Return Over Time")
 plt.show()
-leader_stocks = list(leader_lagger_dict.keys())
-lagger_stocks = list(leader_lagger_dict.values())
-stock_colors = ['red' if stock in leader_stocks else 'blue' for stock in stocks_to_include]
-adj_matrix = np.random.rand(len(stocks_to_include), len(stocks_to_include))
-G = build_graph(adj_matrix, stocks_to_include)
-visualize_graph(G, stock_colors)
-print("Modularity:", round(modularity(G),2))
-eigenvector_centralities = eigenvector_centrality(G)
-rounded_eigenvector_centralities = {k: round(v, 2) for k, v in eigenvector_centralities.items()}
-print("Eigenvector Centralities:", rounded_eigenvector_centralities)
-print("Diameter:", round(diameter(G),2))
-print("Average Path Length:", round(average_path_length(G),2))
-print("Average Node Degree:", round(average_node_degree(G),2))
-clustering_coeffs = clustering_coefficients(G)
-rounded_clustering_coeffs = {k: round(v, 2) for k, v in clustering_coeffs.items()}
-print("Clustering Coefficients:", rounded_clustering_coeffs)
+
+# leader_stocks = list(leader_lagger_dict.keys())
+# lagger_stocks = list(leader_lagger_dict.values())
+# stock_colors = ['red' if stock in leader_stocks else 'blue' for stock in stocks_to_include]
+# adj_matrix = filtered_stock_data[0].copy()
+# G = build_graph(adj_matrix, stocks_to_include)
+# visualize_graph(G, stock_colors)
+# print("Modularity:", round(modularity(G),2))
+# eigenvector_centralities = eigenvector_centrality(G)
+# rounded_eigenvector_centralities = {k: round(v, 2) for k, v in eigenvector_centralities.items()}
+# print("Eigenvector Centralities:", rounded_eigenvector_centralities)
+# print("Diameter:", round(diameter(G),2))
+# print("Average Path Length:", round(average_path_length(G),2))
+# print("Average Node Degree:", round(average_node_degree(G),2))
+# clustering_coeffs = clustering_coefficients(G)
+# rounded_clustering_coeffs = {k: round(v, 2) for k, v in clustering_coeffs.items()}
+# print("Clustering Coefficients:", rounded_clustering_coeffs)
