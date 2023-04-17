@@ -120,6 +120,31 @@ def create_directed_graph(leader_lagger_dict, stock_colors):
     plt.axis('off')
     plt.show()
 
+
+
+# Find all leader-lagger pairs for the first day
+first_day_leader_lagger_pairs = find_all_leader_lagger_pairs(masked_array_first_day, stock_names)
+
+# Filter out pairs that are not in the stockData DataFrame
+filtered_first_day_leader_lagger_pairs = {
+    (leader, lagger): value
+    for (leader, lagger), value in first_day_leader_lagger_pairs.items()
+    if leader in stockData.columns and lagger in stockData.columns
+}
+
+# Sort the filtered pairs by value and keep the top 20
+sorted_filtered_pairs = sorted(filtered_first_day_leader_lagger_pairs.items(), key=lambda x: x[1], reverse=True)
+top_20_filtered_pairs = dict(sorted_filtered_pairs[:20])
+
+# Create a stock_colors dictionary for all stocks in the top_20_filtered_pairs
+first_day_stock_colors = {}
+for leader, lagger in top_20_filtered_pairs.keys():
+    first_day_stock_colors[leader] = 'red'
+    first_day_stock_colors[lagger] = 'blue'
+
+# Call the create_directed_graph function with top_20_filtered_pairs and first_day_stock_colors
+create_directed_graph(top_20_filtered_pairs, first_day_stock_colors)
+
 stock_colors = {stock: 'red' for stock in leader_lagger_dict.keys()}
 stock_colors.update({stock: 'blue' for stock in leader_lagger_dict.values()})
 create_directed_graph(leader_lagger_dict, stock_colors)
