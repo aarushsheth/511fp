@@ -119,7 +119,15 @@ def create_directed_graph(leader_lagger_dict, stock_colors):
     nx.draw_networkx_edges(G, pos, edgelist=G.edges(), arrowstyle='->', arrowsize=20, node_size=2000, alpha=0.5, width=2.5)  # Increase width for thicker arrows
     plt.axis('off')
     plt.show()
-
+def find_all_leader_lagger_pairs(masked_array, stock_names):
+    leader_lagger_pairs = {}
+    for row in range(masked_array.shape[0]):
+        for col in range(masked_array.shape[1]):
+            if row != col and row < len(stock_names) and col < len(stock_names):
+                leader = stock_names[row]
+                lagger = stock_names[col]
+                leader_lagger_pairs[(leader, lagger)] = masked_array[row, col]
+    return leader_lagger_pairs
 
 
 # Find all leader-lagger pairs for the first day
