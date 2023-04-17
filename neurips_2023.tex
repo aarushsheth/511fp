@@ -99,9 +99,21 @@ Furthermore, we will conduct PCA on our data set to identify any underlying fact
 In conclusion, our research aims to determine whether network analysis of the stock market, particularly analyzing the lead-lag effect, can provide valuable insights for investors and market analysts. By building on previous work and applying network analysis techniques such as degree centrality, eigenvector centrality, hubs and authorities, and modularity to the stock market network, we hope to contribute to the understanding of the stock market's complex dynamics and potentially inform investment strategies and market monitoring efforts.
 \section{Results}
 %Kevin
+In short, our model can be used as a risk-aversion strategy. After conducting a network analysis, in observation of the lead-lag effect we quantitatively beat the S$\&$P 500 by about ten percent over the course of the last four fiscal quarters.\footnote{We analyzed the lead-lag effect on data spanning from March 15, 2013 to March 15, 2023 but the subsequent results stem from an analysis from March 15, 2022 to March 15, 2023}
+\subsection{Network and Graph Model}
+Evident in Fig. [ref], a network plot of our lead-lag pairs on the first day of trading, multiple leaders led the same lagger and the strongest signals often came from one lagger. Interestingly enough, lead-lag pairs did not always form along industry lines. Since our analysis is centered around a directed graph, we are precluded from studying the assortment of network centrality measures, namely, eigenvector centrality. In constructing this plot, we mask the main diagonal of the pseudo adjacency matrix, omitting the study of stocks leading and lagging themselves.
+\subsection{Portfolio Returns and Parameter Exploration}
+Over the course of the last four fiscal quarters, our plot, see Fig. [ref]\footnote{Using the optimal values of buying threshold and trailing stop percentage.} of portfolio returns mirrored the ebb and flow of the S$\&$P 500's history. While our portfolio does not experience positive growth during the same period, we loose roughly five percent in value while the S$\&$P 500 looses fifteen.\footnote{Hence, someone who did not invest at all would have kept the value of their capital while our portfolio and the S$\&$P 500's value diminished, not account for inflation}
+
+The four quarters shown in Fig. [ref] are well-regarded as belonging to a bear market, as opposed to a bull market in Fig. [ref].
+
+Naturally, we were prompted to conduct basic parameter exploration with the hopes of maximizing our return given our risk preferences amongst other variables. In Fig. [ref], we explore the portfolio return, buy threshold, and trailing stop percentage parameter space.
 \section{Code hurdles}
 %Kevin
-\section{Analysis}
+Talk about data collection and processing
+Include notes from slides
+Etc.
+\section{Analysis and Conclusions}
 %Jonah
 \section{Considerations and Future work}
 %Aarush
