@@ -102,3 +102,25 @@ plt.title("Trailing Stop: 0.10 and Buy Threshold: 1.075")
 plt.legend()
 plt.xticks(tick_locations, tick_labels)
 plt.show()
+
+def create_directed_graph(leader_lagger_dict, stock_colors):
+    G = nx.DiGraph()
+
+    for leader, lagger in leader_lagger_dict.items():
+        G.add_edge(lagger, leader)
+
+    pos = nx.spring_layout(G, k=0.5)  # Increase the k value to bring the nodes closer
+    plt.figure(figsize=(10, 10))
+
+    for stock, color in stock_colors.items():
+        nx.draw_networkx_nodes(G, pos, nodelist=[stock], node_color=color, node_size=2000, alpha=0.8)  # Increase node_size for larger circles
+        nx.draw_networkx_labels(G, pos, labels={stock: stock}, font_size=12, font_color='white', font_weight='bold')  # Increase font_size and change font_color to white
+
+    nx.draw_networkx_edges(G, pos, edgelist=G.edges(), arrowstyle='->', arrowsize=20, node_size=2000, alpha=0.5, width=2.5)  # Increase width for thicker arrows
+    plt.axis('off')
+    plt.show()
+
+stock_colors = {stock: 'red' for stock in leader_lagger_dict.keys()}
+stock_colors.update({stock: 'blue' for stock in leader_lagger_dict.values()})
+create_directed_graph(leader_lagger_dict, stock_colors)
+
