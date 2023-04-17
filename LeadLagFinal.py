@@ -128,6 +128,9 @@ def find_all_leader_lagger_pairs(masked_array, stock_names):
                 lagger = stock_names[col]
                 leader_lagger_pairs[(leader, lagger)] = masked_array[row, col]
     return leader_lagger_pairs
+# Calculate the first day leader-lagger pairs
+first_day_data = loaded_daily_data[0, :, :]
+masked_array_first_day = np.ma.masked_array(first_day_data, mask=np.eye(498, dtype=bool))
 
 
 # Find all leader-lagger pairs for the first day
