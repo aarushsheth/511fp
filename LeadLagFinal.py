@@ -61,6 +61,10 @@ year_daily_data = loaded_daily_data[-250:, :, :]
 pseudo_adj_matrix = year_daily_data[0]
 avg_out_degrees = average_out_degree(pseudo_adj_matrix)
 stocks_to_include = set(leader_lagger_dict.keys()).union(set(leader_lagger_dict.values()))
+# Use for bull market
+# end_date = stockData.index[-251]
+# start_date = end_date - pd.Timedelta(days=249)
+# filtered_stock_data = stockData.loc[start_date:end_date, stocks_to_include]
 filtered_stock_data = stockData.loc[:, stocks_to_include].tail(250)
 n_laggers = len(leader_lagger_dict.values())
 initial_investment = 500000
@@ -78,6 +82,8 @@ for i in range(1, n_days):
     for leader, lagger in leader_lagger_dict.items():
         current_leader_price = filtered_stock_data[leader].iloc[i]
         highest_leader_prices[leader] = max(highest_leader_prices[leader], current_leader_price)
+#         Use for bull market
+#         if current_leader_price >= 1.0 * filtered_stock_data[leader].iloc[i - 1]:
         if current_leader_price >= 1.08 * filtered_stock_data[leader].iloc[i - 1]:
             price = filtered_stock_data[lagger].iloc[i]
             cash_to_invest = remaining_cash / n_laggers
@@ -101,6 +107,8 @@ portfolio_values = [portfolio_value(portfolio, filtered_stock_data.iloc[i]) + re
 
 ticker = "^GSPC"
 stock = yf.Ticker(ticker)
+# Use for bull market
+# historical_data = stock.history(start="2021-06-15", end="2022-04-15")
 historical_data = stock.history(start="2022-03-29", end="2023-03-15")
 historical_returns = historical_data['Open'].pct_change().dropna()
 resampled_historical_returns = np.interp(
@@ -119,6 +127,8 @@ tick_labels = [filtered_stock_data.index[i].strftime("%b %Y") for i in tick_loca
 plt.plot(percentage_historical_returns, label="S&P 500 Returns")
 plt.plot(percentage_portfolio_returns, label="Portfolio Returns")
 plt.ylabel("Returns (%)")
+# Use for bull market
+# plt.title("Trailing Stop: 0.10 and Buy Threshold: 1.0")
 plt.title("Trailing Stop: 0.10 and Buy Threshold: 1.075")
 plt.legend()
 plt.xticks(tick_locations, tick_labels)
