@@ -25,12 +25,13 @@ To tackle this question, we will build upon two previous studies—of which both
 
 While these prior works provide valuable insights into the network structure of the stock market, there remains much to expand on this approach. In our research, we concentrate on the lead-lag effect, which refers to the phenomenon where the returns of one stock lead, over some period—referred to as the "lag"—the returns of another stock. By analyzing the lead-lag effect within the network of the stock market, we aim to offer insights into the dynamics of  market behavior and potentially inform investment strategies.
 \section{Methodology}
-We realize that the lead-lag relationship is a "strategy-enhancer," but not a strategy in itself. Thus, we combined it with a known, semi-reliable, fundamental strategy: Capital Asset Pricing Model (CAPM). Simply put, CAPM is an effective way to compute the expected return of a given security based on the market risk premium and the systematic risk of the security. With the coupling of these two strategies, we selected a portfolio and compared its returns to the S\&P 500.
+We realize that the lead-lag relationship is a "strategy-enhancer," but not a strategy in itself. Thus, we combined it with a known, semi-reliable, fundamental strategy: the  Capital Asset Pricing Model (CAPM) as well as with another network theory technique, out-degree. Simply put, CAPM is an effective way to compute the expected return of a given security based on the market risk premium and the systematic risk of the security and out-degree in a measure of the number of edges leaving a given node. With out-degree, specifically, we looked at the out-degree of the lagger—assuming that a lagger with a lower out-degree will receive greater input from its few leaders. CAPM is normalized around the market rate, so we curve our out-degree scores and then weigh the two methods 70-30, CAPM and out-degree respectively. From this, we choose the ten stocks that have the highest absolute sum, these are the stocks that we will trade over the quarter.
+With the coupling of these two strategies, we selected a portfolio and compared its returns to the S\&P 500.
 \subsection{Data Collection and Preprocessing}
 We first constructed a network of the market using the stock return data of the S\&P 500. This involved building a script that web scraped for relevant data.
 
 Using clever list manipulation and Python's  {\fontfamily{qcr}\selectfont
-numba} package, we were able to tame the large computational time that comes with processing our pseudo-adjacency matrix across 500 stocks for ten years. Correspondingly, there are roughly 250 trading days per year so making sure that our data cubes matched imported S$\&$P 500 time series data was critical to ensure a reliable comparison.
+numba} package, we were able to tame the large computational time that comes with processing our pseudo-adjacency matrix across 500 stocks for ten years. Correspondingly, there are roughly 250 trading days per year so making sure that our data cubes matched imported S$\&$P 500 time series data was critichttps://www.overleaf.com/project/644356bbf32abd0a13ecbb0bal to ensure a reliable comparison.
 
 The data used in subsequent steps is sourced from a collections of files we generated. One contains daily stock prices for all assets in the S$\&$P 500, another contains the lead-lag preprocessed adjacency matrices in the form of a tensor, and another contains quarterly CAPM data for all assets.
 \subsection{Identifying Lead-Lag Pairs}
@@ -122,10 +123,25 @@ Naturally, we were prompted to conduct basic parameter exploration with the hope
     \label{fig:parameters}
 \end{figure}
 
-\section{Analysis and Conclusions}
+\section{Analysis and Considerations}
 %Jonah
-\section{Considerations and Future work}
-%Aarush
+\section{Conclusions}
+Based on our analysis of the lead-lag effect in the NYSE, we draw several significant conclusions. Firstly, our model, which combines network analysis with fundamental strategies, can potentially outperform the market in predicting stock performance. However, we acknowledge that our results are based on a specific subset of years and may not be able to be generalized. 
+
+Secondly, our finding that lead-lag pairs often form outside of industry lines contradicts previous literature and suggests that investors may benefit from examining unconventional connections. 
+
+Thirdly, we demonstrate that our strategy can be customized to fit individual investors' risk preferences by adjusting the buy threshold. In bearish markets, investors can raise the threshold to experience the market's ups and downs to a lesser degree, while in growth-favoring markets, investors can lower the threshold to expose themselves to more risk and potential return. 
+
+Overall, our study highlights the usefulness of network analysis in predicting stock performance and the importance of considering unconventional connections in investment decisions. Furthermore, our approach allows for customization to meet individual risk preferences, demonstrating its practical relevance to investors.
+
+\section{Future Work}
+
+There are several potential areas for future work and unanswered questions that could be addressed in further research. First, our study did not thoroughly explore the impact of different time periods on the effectiveness of the lead-lag effect. Investigating whether the relationships observed in our study hold true over longer time periods or during different economic cycles and market conditions would be an interesting avenue for future research.
+
+In addition, our study focused on the use of network analysis combined with fundamental strategies in predicting stock performance. However, there are several other strategies and factors that could be incorporated into the analysis. For instance, investigating the effectiveness of incorporating technical analysis, sentiment analysis, or macroeconomic indicators in combination with network analysis could yield interesting results. 
+
+Moreover, it would be more realistic to incorporate weighted edges and a distributed value for the lead-lag coefficient in our model, taking into account the differences in market capitalization among stocks. Specifically, assigning higher numbers in the matrix to stocks that were extremely lagged over a given period, and assigning less weight to the edges of stocks with higher market capitalization. As well, it would be helpful to investigate the effectiveness of different lead-lag thresholds in predicting stock performance.
+
 \section*{References}
 [1]: Li, Y., Wang, T., Sun, B., \& Liu. Detecting the lead–lag effect in stock markets: Definition, patterns, and investment strategies. Financial Innovation, 2022.
 
