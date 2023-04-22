@@ -79,11 +79,11 @@ Since our analysis is centered around a directed graph, we are precluded from st
         \caption{Bear market lead-lag pairs.}
         \label{fig:bearNetwork}
     \end{subfigure}
-    \caption{Network graphs of lead-lag pairs for the first day of trading. Blue nodes represent laggers with directed edges connected them to red nodes representing leaders.}
+    \caption{Network graphs of lead-lag pairs for the first day of trading. Blue nodes represent laggers with directed edges connecting them to red nodes representing leaders.}
     \label{fig:networks}
 \end{figure}
-\subsection{Portfolio Returns and Parameter Exploration}
-Over the course of the last four fiscal quarters and during the summer of 2021, our portfolio, see Fig. \ref{fig:portfolio}\footnote{Using the optimal values of buying threshold and trailing stop percentage.} returns mirrored the ebb and flow of the S$\&$P 500's history. During a bear market our portfolio does not experience positive growth during the same period, in fact, we loose roughly five percent in value while the S$\&$P 500 approximately looses fifteen percent, see Fig. \ref{fig:bearPlot}.\footnote{Hence, someone who did not invest at all would have kept the value of their capital while our portfolio and the S$\&$P 500's value diminished, not account for inflation} Moreover, during a bull market, we observe a positive return roughly two percent greater than the S$\&$P 500 during the same period, see Fig. \ref{fig:bullPlot}.
+\subsection{Portfolio Simulation}
+Over the course of the last four fiscal quarters and during the summer of 2021, our portfolio returns mirrored the ebb and flow of the S$\&$P 500's historical returns, see Fig. \ref{fig:portfolio}. During a bear market our portfolio does not experience positive growth during the same period, in fact, we loose roughly five percent in value while the S$\&$P 500 approximately looses fifteen percent, see Fig. \ref{fig:bearPlot}.\footnote{Hence, someone who did not invest at all would have kept the value of their capital while our portfolio and the S$\&$P 500's value diminished, not accounting for inflation} Moreover, during a bull market, we observe a positive return roughly two percent greater than the S$\&$P 500 during the same period, see Fig. \ref{fig:bullPlot}.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.495\textwidth}
@@ -102,8 +102,8 @@ Over the course of the last four fiscal quarters and during the summer of 2021, 
     \caption{Back-testing of portfolio returns compared to historical returns of the S$\&$P 500  ($^\wedge$GSPC).}
     \label{fig:portfolio}
 \end{figure}
-Naturally, we were prompted to conduct basic parameter exploration with the hopes of maximizing our return given our risk preferences amongst other variables. In Fig. \ref{fig:contourPlot}, we explore the portfolio return, buy threshold, and trailing stop percentage parameter space.
-%I believe it is more insightful to see trailing stop percentage held constant, which is not the case in 3b, where buy threshold is being held constant.
+\subsection{Parameter Exploration}
+Naturally, we were prompted to conduct basic parameter exploration with the hopes of maximizing our return given our risk preferences amongst other variables.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.495\textwidth}
@@ -122,9 +122,15 @@ Naturally, we were prompted to conduct basic parameter exploration with the hope
     \caption{Mesh grid plot of trailing stop percentage vs. buy threshold vs. portfolio returns}
     \label{fig:parameters}
 \end{figure}
+We observed that when the buy threshold was set to a value greater than or equal to 1.13, the model never engaged in any trades, thereby resulting in no portfolio returns. This suggests that a buy threshold of 1.13 or higher is too conservative for the model to capitalize on market opportunities.
 
+Furthermore, we found that the highest portfolio value was attained when the trailing stop percentage was set to a value less than or equal to 0.40. At this threshold, all trades were sold on a daily basis, indicating a high turnover strategy. This result is demonstrated in the contour plot presented in Fig. \ref{fig:contourPlot}.
+
+In contrast, when the buy threshold was set to a value less than or equal to 1.07, the model traded more frequently, exposing the portfolio to increased risk. The 2D cross-section of the contour plot in Fig. \ref{fig:slicePlot} shows the impact of the buy threshold on trading frequency and risk exposure. As a result we used a trailing stop percentage of 0.10 in our portfolio simulations and toggled the buying threshold according to whether or not we were trading in a bear or bull market, see Fig. \ref{fig:portfolio}.
+
+Our findings indicate that an optimal trading strategy would involve setting the buy threshold and trailing stop percentage within specific ranges to balance the trade-offs between portfolio returns, trading frequency, and risk exposure. Further research is warranted to refine these ranges and explore additional parameters that may influence the performance of the model.
 \section{Analysis and Considerations}
-%Jonah
+%Aarush
 \section{Conclusions}
 Based on our analysis of the lead-lag effect in the NYSE, we draw several significant conclusions. Firstly, our model, which combines network analysis with fundamental strategies, can potentially outperform the market in predicting stock performance. However, we acknowledge that our results are based on a specific subset of years and may not be able to be generalized. 
 
@@ -135,7 +141,6 @@ Thirdly, we demonstrate that our strategy can be customized to fit individual in
 Overall, our study highlights the usefulness of network analysis in predicting stock performance and the importance of considering unconventional connections in investment decisions. Furthermore, our approach allows for customization to meet individual risk preferences, demonstrating its practical relevance to investors.
 
 \section{Future Work}
-
 There are several potential areas for future work and unanswered questions that could be addressed in further research. First, our study did not thoroughly explore the impact of different time periods on the effectiveness of the lead-lag effect. Investigating whether the relationships observed in our study hold true over longer time periods or during different economic cycles and market conditions would be an interesting avenue for future research.
 
 In addition, our study focused on the use of network analysis combined with fundamental strategies in predicting stock performance. However, there are several other strategies and factors that could be incorporated into the analysis. For instance, investigating the effectiveness of incorporating technical analysis, sentiment analysis, or macroeconomic indicators in combination with network analysis could yield interesting results. 
