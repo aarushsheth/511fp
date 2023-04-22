@@ -31,7 +31,7 @@ With the coupling of these two strategies, we selected a portfolio and compared 
 We first constructed a network of the market using the stock return data of the S\&P 500. This involved building a script that web scraped for relevant data.
 
 Using clever list manipulation and Python's  {\fontfamily{qcr}\selectfont
-numba} package, we were able to tame the large computational time that comes with processing our pseudo-adjacency matrix across 500 stocks for ten years. Correspondingly, there are roughly 250 trading days per year so making sure that our data cubes matched imported S$\&$P 500 time series data was critichttps://www.overleaf.com/project/644356bbf32abd0a13ecbb0bal to ensure a reliable comparison.
+numba} package, we were able to tame the large computational time that comes with processing our pseudo-adjacency matrix across 500 stocks for ten years. Correspondingly, there are roughly 250 trading days per year so making sure that our data cubes matched imported S$\&$P 500 time series data was critical to ensure a reliable comparison.
 
 The data used in subsequent steps is sourced from a collections of files we generated. One contains daily stock prices for all assets in the S$\&$P 500, another contains the lead-lag preprocessed adjacency matrices in the form of a tensor, and another contains quarterly CAPM data for all assets.
 \subsection{Identifying Lead-Lag Pairs}
@@ -83,7 +83,7 @@ Since our analysis is centered around a directed graph, we are precluded from st
     \label{fig:networks}
 \end{figure}
 \subsection{Portfolio Simulation}
-Over the course of the last four fiscal quarters and during the summer of 2021, our portfolio returns mirrored the ebb and flow of the S$\&$P 500's historical returns, see Fig. \ref{fig:portfolio}. During a bear market our portfolio does not experience positive growth during the same period, in fact, we loose roughly five percent in value while the S$\&$P 500 approximately looses fifteen percent, see Fig. \ref{fig:bearPlot}.\footnote{Hence, someone who did not invest at all would have kept the value of their capital while our portfolio and the S$\&$P 500's value diminished, not accounting for inflation} Moreover, during a bull market, we observe a positive return roughly two percent greater than the S$\&$P 500 during the same period, see Fig. \ref{fig:bullPlot}.
+Over the course of the last four fiscal quarters and during the summer of 2021, our portfolio returns mirrored the ebb and flow of the S$\&$P 500's historical returns, see Fig. \ref{fig:portfolio}. During a bear market our portfolio does not experience positive growth during the same period, in fact, we lose roughly five percent in value while the S$\&$P 500 approximately loses fifteen percent, see Fig. \ref{fig:bearPlot}.\footnote{Hence, someone who did not invest at all would have kept the value of their capital while our portfolio and the S$\&$P 500's value diminished, not accounting for inflation} Moreover, during a bull market, we observe a positive return roughly twelve percent greater than the S$\&$P 500 during the same period, see Fig. \ref{fig:bullPlot}.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.495\textwidth}
@@ -104,6 +104,17 @@ Over the course of the last four fiscal quarters and during the summer of 2021, 
 \end{figure}
 \subsection{Parameter Exploration}
 Naturally, we were prompted to conduct basic parameter exploration with the hopes of maximizing our return given our risk preferences amongst other variables.
+
+
+\underline{Bear Market}
+
+We observed that when the buy threshold was set to a value greater than or equal to 1.13, the model never engaged in any trades, thereby resulting in no portfolio returns. This suggests that a buy threshold of 1.13 or higher is too conservative for the model to capitalize on market opportunities.
+
+Furthermore, we found that the highest portfolio value was attained when the trailing stop percentage was set to a value less than or equal to 0.40. At this threshold, all trades were sold on a daily basis, indicating a high turnover strategy. This result is demonstrated in the contour plot presented in Fig. \ref{fig:contourPlot}.
+
+In contrast, when the buy threshold was set to a value less than or equal to 1.07, the model traded more frequently, exposing the portfolio to increased risk. The 2D cross-section of the contour plot in Fig. \ref{fig:stopPlot} shows the impact of the buy threshold on trading frequency and risk exposure. As a result we used a trailing stop percentage of 0.10 in our portfolio simulations and toggled the buying threshold according to whether or not we were trading in a bear or bull market, see Fig. \ref{fig:portfolio}.
+
+
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.495\textwidth}
@@ -116,21 +127,73 @@ Naturally, we were prompted to conduct basic parameter exploration with the hope
     \begin{subfigure}{0.495\textwidth}
         \centering
         \includegraphics[width=\linewidth]{slicePlot.png}
-        \caption{2D cross-section of contour plot, holding trailing stop percentage constant.}
-        \label{fig:slicePlot}
+        \caption{2D cross-section of contour plot, holding buy threshold constant.}
+        \label{fig:buyPlot}
     \end{subfigure}
-    \caption{Mesh grid plot of trailing stop percentage vs. buy threshold vs. portfolio returns}
     \label{fig:parameters}
+    \begin{subfigure}{0.495\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{stopSlice.png}
+        \caption{2D cross-section of contour plot, holding stop loss threshold constant.}
+        \label{fig:stopPlot}
+    \end{subfigure}
+    \caption{Mesh grid plot of trailing stop percentage vs. buy threshold vs. portfolio returns in a bear market}
+
 \end{figure}
-We observed that when the buy threshold was set to a value greater than or equal to 1.13, the model never engaged in any trades, thereby resulting in no portfolio returns. This suggests that a buy threshold of 1.13 or higher is too conservative for the model to capitalize on market opportunities.
 
-Furthermore, we found that the highest portfolio value was attained when the trailing stop percentage was set to a value less than or equal to 0.40. At this threshold, all trades were sold on a daily basis, indicating a high turnover strategy. This result is demonstrated in the contour plot presented in Fig. \ref{fig:contourPlot}.
+\underline{Bull Market}
 
-In contrast, when the buy threshold was set to a value less than or equal to 1.07, the model traded more frequently, exposing the portfolio to increased risk. The 2D cross-section of the contour plot in Fig. \ref{fig:slicePlot} shows the impact of the buy threshold on trading frequency and risk exposure. As a result we used a trailing stop percentage of 0.10 in our portfolio simulations and toggled the buying threshold according to whether or not we were trading in a bear or bull market, see Fig. \ref{fig:portfolio}.
+The behavior observed in the bull market, was as expect, different to that observed in a bear.
 
-Our findings indicate that an optimal trading strategy would involve setting the buy threshold and trailing stop percentage within specific ranges to balance the trade-offs between portfolio returns, trading frequency, and risk exposure. Further research is warranted to refine these ranges and explore additional parameters that may influence the performance of the model.
+We observed that when the buy threshold was set to a value greater than or equal to 1.08, the model refrained from engaging in any trades (Fig \ref{fig:bullstopPlot}) , consequently yielding no portfolio returns. This phenomenon may be attributed to the fact that in a bull market, the model perceives a buy threshold of 1.08 or higher as overly conservative, thus missing out on potential market opportunities. Additionally, we discovered that the trailing stop percentage negatively impacted the portfolio when set above 0.8 (Fig \ref{fig:bullbuyPlot}). This could be due to the fact that a higher trailing stop in a bull market may lead to premature exits from profitable positions, limiting the potential gains.
+
+Interestingly, our study found that the optimal buy threshold was set at 1.02, where the return increased from 1 to 1.02 and subsequently decreased up to 1.08( Fig \ref{fig:bullcontourPlot}). This suggests that a buy threshold set within this range allows the model to effectively capitalize on the upward market trend while minimizing the risk of overexposure. The reason for this increase in return up to 1.02 and subsequent decrease can be attributed to the balance between capturing gains during the bull market and avoiding excessive risk exposure. At a buy threshold of 1.02, the model is able to participate in the market's upward momentum, while still maintaining a relatively conservative approach to minimize potential losses. As the buy threshold increases beyond 1.02, the model becomes increasingly conservative, leading to missed opportunities and a decline in returns.
+
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.495\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{bullContour.png}
+        \caption{Contour plot.}
+        \label{fig:bullcontourPlot}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.495\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{bullStopSlice.png}
+        \caption{2D cross-section of contour plot, holding buy threshold constant.}
+        \label{fig:bullbuyPlot}
+    \end{subfigure}
+    \label{fig:buyparameters}
+    \begin{subfigure}{0.495\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{bullBuySlice.png}
+        \caption{2D cross-section of contour plot, holding stop loss threshold constant.}
+        \label{fig:bullstopPlot}
+    \end{subfigure}
+    \caption{Mesh grid plot of trailing stop percentage vs. buy threshold vs. portfolio returns in a bull market}
+
+\end{figure}
+
+In both bear and bull markets, our findings indicate that an optimal trading strategy would involve setting the buy threshold and trailing stop percentage within specific ranges to balance the trade-offs between portfolio returns, trading frequency, and risk exposure. Further research is warranted to refine these ranges and explore additional parameters that may influence the performance of the model.
+
+
+
+
 \section{Analysis and Considerations}
 %Aarush
+
+In our study on the lead-lag effect, there were several considerations that we took into account
+ while developing our model. Firstly, our choice of modeling the S\&P 500 as a directed graph limited the applicability of many standard network analysis techniques(such as eigenvector centrality, or modularity),
+  which may have restricted the depth of our analysis. Secondly, the lead-lag threshold that we decided upon was not extensively tested, 
+  which could potentially affect the robustness of our findings. 
+  There is also the issue of overfitting when determining the buy threshold and stop loss parameters. Through extensive testing, we identified values that appeared to be robust in both bull and bear markets. However, it is crucial to exercise caution when generalizing these findings to a larger sample, as overfitting can lead to overly optimistic performance estimates that may not hold true in different market conditions. 
+  Additionally, our chosen fundamental strategy, the Capital Asset Pricing Model (CAPM),
+  is based on certain unrealistic assumptions that may not accurately reflect real-world trading conditions. Lastly, it is important to note that due to the frequent trading nature of our model, 
+  commission costs must be considered as they could significantly impact the overall performance of the model. These considerations highlight the challenges and limitations
+   faced when attempting to develop an effective trading model that accurately captures the complexities of the lead-lag effect.
+
 \section{Conclusions}
 Based on our analysis of the lead-lag effect in the NYSE, we draw several significant conclusions. Firstly, our model, which combines network analysis with fundamental strategies, can potentially outperform the market in predicting stock performance. However, we acknowledge that our results are based on a specific subset of years and may not be able to be generalized. 
 
