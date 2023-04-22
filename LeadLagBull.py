@@ -74,7 +74,7 @@ for i in range(1, n_days):
     for leader, lagger in leader_lagger_dict.items():
         current_leader_price = filtered_stock_data[leader].iloc[i]
         highest_leader_prices[leader] = max(highest_leader_prices[leader], current_leader_price)
-        if current_leader_price >= 1.055 * filtered_stock_data[leader].iloc[i - 1]:
+        if current_leader_price >= 1.02 * filtered_stock_data[leader].iloc[i - 1]:
             price = filtered_stock_data[lagger].iloc[i]
             cash_to_invest = remaining_cash / n_laggers
             buy_stock(portfolio, lagger, cash_to_invest, price)
@@ -115,7 +115,7 @@ tick_labels = [filtered_stock_data.index[i].strftime("%b %Y") for i in tick_loca
 plt.plot(percentage_historical_returns, label="S&P 500 Returns")
 plt.plot(percentage_portfolio_returns, label="Portfolio Returns")
 plt.ylabel("Returns (%)")
-plt.title("Trailing Stop: 0.10 and Buy Threshold: 1.055")
+plt.title("Trailing Stop: 0.0 and Buy Threshold: 1.02")
 plt.legend()
 plt.xticks(tick_locations, tick_labels)
 plt.show()
